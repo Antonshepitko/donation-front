@@ -5,7 +5,7 @@ on:
     branches: ["main", "master"]
 
 env:
-  IMAGE: ${{ toLower(secrets.DOCKER_USERNAME) }}/tipit-front
+  IMAGE: ${{ secrets.DOCKER_USERNAME }}/tipit-front
 
 jobs:
   build_push_and_bump:
