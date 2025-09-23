@@ -8,7 +8,6 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "StreamDonate - Support Your Favorite Streamers",
   description: "A platform for streamers to receive donations and connect with their community",
-    generator: 'v0.app'
 }
 
 export default function RootLayout({
