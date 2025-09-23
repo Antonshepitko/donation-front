@@ -9,20 +9,15 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent } from "@/components/ui/card"
 import { Eye, EyeOff, ArrowLeft, Loader2 } from "lucide-react"
 import { authApi } from "@/lib/api"
 import { useToast } from "@/components/ui/toast"
 
-export default function AuthPage() {
-  const [isLogin, setIsLogin] = useState(true)
+export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
     username: "",
     password: "",
   })
@@ -52,63 +47,36 @@ export default function AuthPage() {
       return
     }
 
-    console.log("📝 Form submission:")
-    console.log("- Is login:", isLogin)
+    console.log("📝 Login submission:")
     console.log("- Username:", formData.username)
     console.log("- Password length:", formData.password.length)
 
     try {
-      if (isLogin) {
-        // Login
-        console.log("🔑 Attempting login...")
-        const loginData = {
-          username: formData.username,
-          password: formData.password,
-        }
-
-        const response = await authApi.login(loginData)
-        console.log("✅ Login successful:", response)
-
-        toast({
-          type: "success",
-          title: "Login Successful",
-          description: `Welcome back, ${loginData.username}!`,
-        })
-
-        // Store username for display
-        localStorage.setItem("username", loginData.username)
-
-        // Redirect to dashboard
-        setTimeout(() => {
-          router.push("/")
-        }, 1500)
-      } else {
-        // Register
-        console.log("📝 Attempting registration...")
-        const registerData = {
-          username: formData.username,
-          password: formData.password,
-        }
-
-        const response = await authApi.register(registerData)
-        console.log("✅ Registration successful:", response)
-
-        toast({
-          type: "success",
-          title: "Registration Successful",
-          description: "Your account has been created successfully!",
-        })
-
-        // Switch to login form after successful registration
-        setTimeout(() => {
-          setIsLogin(true)
-          setFormData((prev) => ({ ...prev, password: "" }))
-        }, 2000)
+      console.log("🔑 Attempting login...")
+      const loginData = {
+        username: formData.username,
+        password: formData.password,
       }
-    } catch (error: any) {
-      console.error("❌ Auth error:", error)
 
-      const errorTitle = isLogin ? "Login Failed" : "Registration Failed"
+      const response = await authApi.login(loginData)
+      console.log("✅ Login successful:", response)
+
+      toast({
+        type: "success",
+        title: "Login Successful",
+        description: `Welcome back, ${loginData.username}!`,
+      })
+
+      // Store username for display
+      localStorage.setItem("username", loginData.username)
+
+      // Redirect to dashboard
+      setTimeout(() => {
+        router.push("/")
+      }, 1500)
+    } catch (error: any) {
+      console.error("❌ Login error:", error)
+
       let errorMessage = "An unexpected error occurred."
 
       if (error.message) {
@@ -126,7 +94,7 @@ export default function AuthPage() {
 
       toast({
         type: "error",
-        title: errorTitle,
+        title: "Login Failed",
         description: errorMessage,
       })
     } finally {
@@ -162,8 +130,8 @@ export default function AuthPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-purple-900/50 to-transparent rounded-lg" />
                   <div className="absolute bottom-6 left-6 text-white">
-                    <h2 className="text-2xl font-bold mb-2">Connecting Streamers,</h2>
-                    <h2 className="text-2xl font-bold">Building Communities</h2>
+                    <h2 className="text-2xl font-bold mb-2">Welcome Back,</h2>
+                    <h2 className="text-2xl font-bold">Streamer!</h2>
                   </div>
                 </div>
 
@@ -174,77 +142,20 @@ export default function AuthPage() {
                 </div>
               </div>
 
-              {/* Right Side - Auth Form */}
+              {/* Right Side - Login Form */}
               <div className="p-8 lg:p-12 flex flex-col justify-center">
                 <div className="w-full max-w-sm mx-auto">
                   <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-white mb-2">
-                      {isLogin ? "Welcome back" : "Create an account"}
-                    </h1>
+                    <h1 className="text-3xl font-bold text-white mb-2">Welcome back</h1>
                     <p className="text-purple-300">
-                      {isLogin ? "Don't have an account? " : "Already have an account? "}
-                      <button
-                        onClick={() => setIsLogin(!isLogin)}
-                        className="text-purple-400 hover:text-purple-300 underline"
-                        disabled={isLoading}
-                      >
-                        {isLogin ? "Sign up" : "Log in"}
-                      </button>
+                      Don't have an account?{" "}
+                      <Link href="/auth/register" className="text-purple-400 hover:text-purple-300 underline">
+                        Sign up
+                      </Link>
                     </p>
                   </div>
 
                   <form onSubmit={handleSubmit} className="space-y-6">
-                    {!isLogin && (
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="firstName" className="text-purple-300">
-                            First name
-                          </Label>
-                          <Input
-                            id="firstName"
-                            name="firstName"
-                            placeholder="Fletcher"
-                            value={formData.firstName}
-                            onChange={handleInputChange}
-                            className="mt-1 bg-slate-700/50 border-purple-800/30 text-white placeholder:text-purple-400"
-                            disabled={isLoading}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="lastName" className="text-purple-300">
-                            Last name
-                          </Label>
-                          <Input
-                            id="lastName"
-                            name="lastName"
-                            placeholder="Last name"
-                            value={formData.lastName}
-                            onChange={handleInputChange}
-                            className="mt-1 bg-slate-700/50 border-purple-800/30 text-white placeholder:text-purple-400"
-                            disabled={isLoading}
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {!isLogin && (
-                      <div>
-                        <Label htmlFor="email" className="text-purple-300">
-                          Email
-                        </Label>
-                        <Input
-                          id="email"
-                          name="email"
-                          type="email"
-                          placeholder="Email"
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          className="mt-1 bg-slate-700/50 border-purple-800/30 text-white placeholder:text-purple-400"
-                          disabled={isLoading}
-                        />
-                      </div>
-                    )}
-
                     <div>
                       <Label htmlFor="username" className="text-purple-300">
                         Username
@@ -288,17 +199,13 @@ export default function AuthPage() {
                       </div>
                     </div>
 
-                    {!isLogin && (
-                      <div className="flex items-center space-x-2">
-                        <Checkbox id="terms" className="border-purple-500 data-[state=checked]:bg-purple-600" />
-                        <Label htmlFor="terms" className="text-sm text-purple-300">
-                          I agree to the{" "}
-                          <Link href="/terms" className="text-purple-400 hover:text-purple-300 underline">
-                            Terms & Conditions
-                          </Link>
-                        </Label>
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm">
+                        <Link href="/auth/forgot-password" className="text-purple-400 hover:text-purple-300">
+                          Forgot your password?
+                        </Link>
                       </div>
-                    )}
+                    </div>
 
                     <Button
                       type="submit"
@@ -308,12 +215,10 @@ export default function AuthPage() {
                       {isLoading ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          {isLogin ? "Signing In..." : "Creating Account..."}
+                          Signing In...
                         </>
-                      ) : isLogin ? (
-                        "Sign In"
                       ) : (
-                        "Create account"
+                        "Sign In"
                       )}
                     </Button>
 
@@ -322,7 +227,7 @@ export default function AuthPage() {
                         <div className="w-full border-t border-purple-800/30" />
                       </div>
                       <div className="relative flex justify-center text-sm">
-                        <span className="bg-slate-800 px-2 text-purple-300">Or register with</span>
+                        <span className="bg-slate-800 px-2 text-purple-300">Or continue with</span>
                       </div>
                     </div>
 
