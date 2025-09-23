@@ -1,25 +1,28 @@
-// app/logout/page.tsx
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+
+// Запрещаем пререндер: заставляем рендерить на запросе
+export const dynamic = 'force-dynamic';
 
 export default function LogoutPage() {
   const router = useRouter();
-  const sp = useSearchParams();
 
   useEffect(() => {
     (async () => {
       try {
         await fetch('/api/auth/logout', { method: 'POST' });
       } catch {
-        // игнорируем сеть/ошибки — всё равно уводим на логин
+        // игнорируем сетевые ошибки — всё равно уводим на логин
       } finally {
+        // Берём next из реального location, без useSearchParams (чтобы не требовать Suspense)
+        const sp = new URLSearchParams(window.location.search);
         const next = sp.get('next') || '/';
         router.replace(`/auth/login?next=${encodeURIComponent(next)}`);
       }
     })();
-  }, [router, sp]);
+  }, [router]);
 
   return (
     <div className="min-h-[50vh] flex items-center justify-center text-sm text-gray-400">
