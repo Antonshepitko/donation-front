@@ -182,7 +182,7 @@ export default function StreamerDashboard() {
               <Link href="/settings">
                 <Button className="bg-purple-600 hover:bg-purple-700">Settings</Button>
               </Link>
-              <Link href="/auth">
+              <Link href="/auth/login">
                 <Button
                   variant="outline"
                   className="border-purple-500 text-purple-300 hover:bg-purple-500 hover:text-white bg-transparent"
