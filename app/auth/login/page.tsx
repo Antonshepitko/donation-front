@@ -35,7 +35,7 @@ export default function LoginPage() {
     }
 
     try {
-      const r = await fetch('/api/auth/login', {
+      const r = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
